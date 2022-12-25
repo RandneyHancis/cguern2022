@@ -1,0 +1,13 @@
+﻿  algor_cg.cpp
+C:\Users\Randney\Documents\Visual Studio 2022\Projects\cpp\Graphics\Graphical Programming Workspace\algor_cg.cpp(57,4): warning C4551: faltando lista de argumentos na chamada de função
+C:\Users\Randney\Documents\Visual Studio 2022\Projects\cpp\Graphics\Graphical Programming Workspace\algor_cg.cpp(107,2): warning C4996: 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _itoa. See online help for details.
+C:\Users\Randney\Documents\Visual Studio 2022\Projects\cpp\Graphics\Graphical Programming Workspace\algor_cg.cpp(108,2): warning C4996: 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _itoa. See online help for details.
+C:\Users\Randney\Documents\Visual Studio 2022\Projects\cpp\Graphics\Graphical Programming Workspace\algor_cg.cpp(158,10): warning C4244: 'inicializando': conversão de 'int' para 'float', possível perda de dados
+C:\Users\Randney\Documents\Visual Studio 2022\Projects\cpp\Graphics\Graphical Programming Workspace\algor_cg.cpp(159,10): warning C4244: 'inicializando': conversão de 'int' para 'float', possível perda de dados
+C:\Users\Randney\Documents\Visual Studio 2022\Projects\cpp\Graphics\Graphical Programming Workspace\algor_cg.cpp(161,27): warning C4244: 'argumento': conversão de 'float' para 'int', possível perda de dados
+C:\Users\Randney\Documents\Visual Studio 2022\Projects\cpp\Graphics\Graphical Programming Workspace\algor_cg.cpp(161,17): warning C4244: 'argumento': conversão de 'float' para 'int', possível perda de dados
+C:\Users\Randney\Documents\Visual Studio 2022\Projects\cpp\Graphics\Graphical Programming Workspace\algor_cg.cpp(179,10): warning C4244: '=': conversão de 'int' para 'float', possível perda de dados
+C:\Users\Randney\Documents\Visual Studio 2022\Projects\cpp\Graphics\Graphical Programming Workspace\algor_cg.cpp(180,10): warning C4244: '=': conversão de 'int' para 'float', possível perda de dados
+C:\Users\Randney\Documents\Visual Studio 2022\Projects\cpp\Graphics\Graphical Programming Workspace\algor_cg.cpp(172,23): warning C4101: 'xy2': variável local não referenciada
+C:\Users\Randney\Documents\Visual Studio 2022\Projects\cpp\Graphics\Graphical Programming Workspace\algor_cg.cpp(172,11): warning C4101: 'P2': variável local não referenciada
+  bgi.vcxproj -> C:\Users\Randney\Documents\Visual Studio 2022\Projects\cpp\Graphics\Graphical Programming Workspace\Debug\bgi.exe
