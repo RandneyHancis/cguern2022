@@ -6,25 +6,30 @@
 using namespace std;
 
 int p1[2], p2[2], OP, XMAX, YMAX;
+//pontos do triangulo
+float pt1[2] = {55, 90}, pt2[2] = {40, 50}, pt3[2] = {70, 50}, pat[2] = {55, 65};
+bool tri == false;
 
-//prótotipos das funções
+//prototipos das funcoes
 void Grade(int x, int y, int c);
 int menu(); 
 void Escrever(int x, int y);
 void RetaGeral(int p1[2], int p2[2]);
-void DDA(int p1[2], int p2[2]);
+void DDA(float p1[2], float p2[2], bool tri);
 void Bresenham(int p1[2], int p2[2]);
+void Triagulo(float pt1[2], float pt2[2], float pt3[2], bool tri);
+void Escala(float pt1[2], float pt2[2], float pt3[2]);
 
 int main() {
 	XMAX = 700;
 	YMAX = 490;
-	initwindow(XMAX, YMAX, "Computação Grafica - Primitivas", 500, 0);
+	initwindow(XMAX, YMAX, "Computacao Grafica - Primitivas", 500, 0);
 	setbkcolor(0);
 	cleardevice();
 	Grade(XMAX, YMAX, 20);
 	OP = menu();	
 
-	while (OP != 4) {
+	while (OP != 5) {
 		switch (OP){
 		case 0:
 			cleardevice();
@@ -42,7 +47,8 @@ int main() {
 			cin >> p1[0] >> p1[1];
 			cout << "Digite o ponto final da reta: ";
 			cin >> p2[0] >> p2[1];
-			DDA(p1, p2);
+			tri = false;
+			DDA(p1, p2, tri);
 			break;
 		case 3:
 			cout << "Digite o ponto inicial da reta: ";
@@ -51,7 +57,8 @@ int main() {
 			cin >> p2[0] >> p2[1];
 			Bresenham(p1, p2);
 			break;
-		case 4:
+		//case 4: triangulo
+		case 5:
 			closegraph();
 			exit;
 		default:
@@ -66,9 +73,9 @@ int main() {
 	return 0;
 }
 
-//funções
+//funcoes
 
-//função do menu de escolha
+//funcao do menu de escolha principal
 int menu() {
 	int Op;
 	cout << "======================================================" << endl;
@@ -78,7 +85,26 @@ int menu() {
 	cout << "Digite 1 para Reta Geral" << endl;
 	cout << "Digite 2 para Reta DDA" << endl;
 	cout << "Digite 3 para Reta Bresenham" << endl;
-	cout << "Digite 4 para sair" << endl;
+	cout << "Digite 4 para sair" << endl; //acrescentar triagulo e modificar numeros
+	cout << "\n======================================================" << endl;
+	cout << "Opcao: ";
+	cin >> Op;
+	return (Op);
+}
+
+//funcao do submenu do triangulo
+int menuTri(){
+	int Op;
+	cout << "======================================================" << endl;
+	cout << "                 Escolha uma opcao                    " << endl;
+	cout << "======================================================" << endl;
+	cout << "Digite 0 para limpar a tela" << endl;
+	cout << "Digite 1 para Fator de escala (2, 2)" << endl;
+	cout << "Digite 2 para Rotacao de 30 graus" << endl;
+	cout << "Digite 3 para Translacao com fator (-3, 4)" << endl;
+	cout << "Digite 4 para Espelhamento em relaÃ§Ã£o ao eixo x" << endl;
+	cout << "Digite 5 para Escala e Rotacao (ponto arbitrario (55, 65))" << endl;
+	cout << "Digite 6 para sair" << endl;
 	cout << "\n======================================================" << endl;
 	cout << "Opcao: ";
 	cin >> Op;
@@ -86,7 +112,7 @@ int menu() {
 }
 
 
-//função de desenhar uma grade na tela
+//funcao de desenhar uma grade na tela
 void Grade(int x, int y, int c) {
 	setcolor(RED);
 	for (int i = 0; i <= y; i = i + c) { //linhas horizontais
@@ -99,7 +125,7 @@ void Grade(int x, int y, int c) {
 	}
 }
 
-//Função para mostrar os pontos escritos na tela
+//Funcao para mostrar os pontos escritos na tela
 void Escrever(int x, int y) {
 	char cx[10], cy[10];
 	itoa(x, cx, 10); //converte int em string
@@ -109,7 +135,7 @@ void Escrever(int x, int y) {
 	outtextxy(x + 30, YMAX - y, cy);
 }
 
-//Função geral da reta
+//Funcao geral da reta
 void RetaGeral(int p1[2], int p2[2]) {
 	int x, x1, x2, y, y1, y2, m, b;
 	x1 = p1[0];
@@ -136,8 +162,8 @@ void RetaGeral(int p1[2], int p2[2]) {
 	}
 }
 
-//Função da Digital Differential Analyser (DDA)
-void DDA(int p1[2], int p2[2]) {
+//Funcao da Digital Differential Analyser (DDA)
+void DDA(float p1[2], float p2[2], bool tri) {//observar tipo de variavel
 	//calculo do dx e dy
 
 	int dx = p2[0] - p1[0];
@@ -155,16 +181,24 @@ void DDA(int p1[2], int p2[2]) {
 	//escreve o pixel em cada passo
 	float X = p1[0];
 	float Y = p1[1];
-	for (int i = 0; i <= decide; i++) {
-		putpixel(round(X), YMAX - round(Y), CYAN);
-		X += Xinc; //incremento de x em cada passo
-		Y += Yinc; //incremento de y em cada passo
-		delay(50);
+	if(tri == false) { //se for linha
+		for (int i = 0; i <= decide; i++) {
+			putpixel(round(X), YMAX - round(Y), CYAN);
+			X += Xinc; //incremento de x em cada passo
+			Y += Yinc; //incremento de y em cada passo
+			delay(50);
+		}
+	}else{ //se for um tringulo
+		for (int i = 0; i <= decide; i++) {
+			putpixel(round(X + XMAX/2), round(YMAX/2 - Y), CYAN);
+			X += Xinc; //incremento de x em cada passo
+			Y += Yinc; //incremento de y em cada passo
+			delay(50);
+		}
 	}
-
 }
 
-//Função de Bresenham
+//Funcao de Bresenham para linha
 void Bresenham(int p1[2], int p2[2]) {
 	int x, y, x1, x2, y1, y2, xf;
 	float P, P2, Dx, Dy, xy2;
@@ -204,3 +238,28 @@ void Bresenham(int p1[2], int p2[2]) {
 		delay(50);
 	}
 }
+
+//funcao para desenha triangulo
+void Triagulo(float pt1[2], float pt2[2], float pt3[2], bool tri){
+	DDA(pt1, pt2, tri);
+	DDA(pt1, pt3, tri);
+	DDA(pt2, pt3, tri);
+}
+
+//funcoes do tringulo
+//funcao de Fator de escala (2, 2)
+void Escala(float pt1[2], float pt2[2], float pt3[2]){
+	pt1[0] = pt1[0] * 2;
+	pt1[1] = pt1[1] * 2;
+	pt2[0] = pt2[0] * 2;
+	pt2[1] = pt2[1] * 2;
+	pt3[0] = pt3[0] * 2;
+	pt3[1] = pt3[1] * 2;
+	Triagulo(pt1, pt2, pt3, tri);
+}
+//funcao de Rotacao de 30 graus
+//funcao de Translacao com fator (-3, 4)
+//funcao de Espelhamento em relaÃ§Ã£o ao eixo x
+//funcao de Escala e Rotacao (ponto arbitrario (55, 65)) 
+
+//fim funcoes do tringulo
