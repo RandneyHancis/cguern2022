@@ -6,19 +6,25 @@
 using namespace std;
 
 int p1[2], p2[2], OP, XMAX, YMAX;
+float COS30 = 0.866, SEN30 = 0.5, SENN30 = -0.5;
 //pontos do triangulo
 float pt1[2] = {55, 90}, pt2[2] = {40, 50}, pt3[2] = {70, 50}, pat[2] = {55, 65};
 bool tri == false;
 
 //prototipos das funcoes
 void Grade(int x, int y, int c);
-int menu(); 
+int menu();
+int menuTri();
+void CasesMenu(int op);
 void Escrever(int x, int y);
 void RetaGeral(int p1[2], int p2[2]);
 void DDA(float p1[2], float p2[2], bool tri);
 void Bresenham(int p1[2], int p2[2]);
 void Triagulo(float pt1[2], float pt2[2], float pt3[2], bool tri);
 void Escala(float pt1[2], float pt2[2], float pt3[2]);
+void Rotacao30(float pt1[2], float pt2[2], float pt3[2]);
+void Translacao(float pt1[2], float pt2[2], float pt3[2]);
+void Espelhamento(float pt1[2], float pt2[2], float pt3[2]);
 
 int main() {
 	XMAX = 700;
@@ -28,8 +34,8 @@ int main() {
 	cleardevice();
 	Grade(XMAX, YMAX, 20);
 	OP = menu();	
-
-	while (OP != 5) {
+	CasesMenu(OP);
+	/*while (OP != 5) {
 		switch (OP){
 		case 0:
 			cleardevice();
@@ -57,7 +63,39 @@ int main() {
 			cin >> p2[0] >> p2[1];
 			Bresenham(p1, p2);
 			break;
-		//case 4: triangulo
+		case 4:
+			OP = menuTri();
+			Triagulo(pt1, pt2, pt3, tri);
+			while (OP != 6){
+				switch (OP){
+				case 0:
+					cleardevice();
+					Grade(XMAX, YMAX, 20);
+					Triagulo(pt1, pt2, pt3, tri);
+					break;
+				case 1:
+					Escala(pt1, pt2, pt3);
+					break;
+				case 2:
+					Rotacao30(pt1, pt2, pt3);
+					break;
+				case 3:
+					Translacao(pt1, pt2, pt3);
+					break;
+				case 4:
+					Espelhamento(pt1, pt2, pt3);
+					break;
+				case 5:
+					//escala e rotacao
+					break:
+				case 6:
+
+				default:
+					cout << "Opcao nao existe, escolha opcao exeistente!" << endl;
+					system("pause");
+					break;
+				}
+			}
 		case 5:
 			closegraph();
 			exit;
@@ -68,7 +106,7 @@ int main() {
 		}
 		system("cls");
 		OP = menu();
-	}
+	}*/
 
 	return 0;
 }
@@ -104,13 +142,94 @@ int menuTri(){
 	cout << "Digite 3 para Translacao com fator (-3, 4)" << endl;
 	cout << "Digite 4 para Espelhamento em relação ao eixo x" << endl;
 	cout << "Digite 5 para Escala e Rotacao (ponto arbitrario (55, 65))" << endl;
-	cout << "Digite 6 para sair" << endl;
+	cout << "Digite 6 para voltar ao menu principal" << endl;
+	cout << "Digite 7 para sair" << endl;
 	cout << "\n======================================================" << endl;
 	cout << "Opcao: ";
 	cin >> Op;
 	return (Op);
 }
 
+//funcao dos cases de menu
+void CasesMenu(int op){
+	while (OP != 5) {
+		switch (OP){
+		case 0:
+			cleardevice();
+			Grade(XMAX, YMAX, 20);
+			break;
+		case 1:
+			cout << "Digite o ponto inicial da reta: ";
+			cin >> p1[0] >> p1[1];
+			cout << "Digite o ponto final da reta: ";
+			cin >> p2[0] >> p2[1];
+			RetaGeral(p1, p2);
+			break;
+		case 2:
+			cout << "Digite o ponto inicial da reta: ";
+			cin >> p1[0] >> p1[1];
+			cout << "Digite o ponto final da reta: ";
+			cin >> p2[0] >> p2[1];
+			tri = false;
+			DDA(p1, p2, tri);
+			break;
+		case 3:
+			cout << "Digite o ponto inicial da reta: ";
+			cin >> p1[0] >> p1[1];
+			cout << "Digite o ponto final da reta: ";
+			cin >> p2[0] >> p2[1];
+			Bresenham(p1, p2);
+			break;
+		case 4:
+			OP = menuTri();
+			Triagulo(pt1, pt2, pt3, tri);
+			while (OP != 7){
+				switch (OP){
+				case 0:
+					cleardevice();
+					Grade(XMAX, YMAX, 20);
+					Triagulo(pt1, pt2, pt3, tri);
+					break;
+				case 1:
+					Escala(pt1, pt2, pt3);
+					break;
+				case 2:
+					Rotacao30(pt1, pt2, pt3);
+					break;
+				case 3:
+					Translacao(pt1, pt2, pt3);
+					break;
+				case 4:
+					Espelhamento(pt1, pt2, pt3);
+					break;
+				case 5:
+					//escala e rotacao
+					break:
+				case 6:
+					CasesMenu(op);
+					break;
+				case 7: 
+					closegraph();
+					exit;
+				default:
+					cout << "Opcao nao existe, escolha opcao exeistente!" << endl;
+					system("pause");
+					break;
+				}
+			}
+		case 5:
+			closegraph();
+			exit;
+		default:
+			cout << "Opcao nao existe, escolha opcao existente!" << endl;
+			system("pause");
+			break;
+		}
+		system("cls");
+		OP = menu();
+	}
+
+}
 
 //funcao de desenhar uma grade na tela
 void Grade(int x, int y, int c) {
@@ -251,15 +370,53 @@ void Triagulo(float pt1[2], float pt2[2], float pt3[2], bool tri){
 void Escala(float pt1[2], float pt2[2], float pt3[2]){
 	pt1[0] = pt1[0] * 2;
 	pt1[1] = pt1[1] * 2;
+
 	pt2[0] = pt2[0] * 2;
 	pt2[1] = pt2[1] * 2;
+	
 	pt3[0] = pt3[0] * 2;
 	pt3[1] = pt3[1] * 2;
 	Triagulo(pt1, pt2, pt3, tri);
 }
+
 //funcao de Rotacao de 30 graus
+void Rotacao30(float pt1[2], float pt2[2], float pt3[2]){
+	float aux = 0.0;
+	aux = pt1[0] * COS30 + pt1[1] * SENN30;
+	pt1[1] = pt1[0] * SEN30 + pt1[1] * COS30;
+	pt1[0] = aux;
+
+	aux = pt2[0] * COS30 + pt2[1] * SENN30;
+	pt2[1] = pt2[0] * SEN30 + pt2[1] * COS30;
+	pt2[0] = aux;
+
+	aux = pt3[0] * COS30 + pt3[1] * SENN30;
+	pt3[1] = pt3[0] * SEN30 + pt3[1] * COS30;
+	pt3[0] = aux;
+
+	Triagulo(pt1, pt2, pt3, tri);
+}
+
 //funcao de Translacao com fator (-3, 4)
+void Translacao(float pt1[2], float pt2[2], float pt3[2]){
+	pt1[0] = pt1[0] + (-3);
+	pt1[1] = pt1[1] + 4;
+
+	pt2[0] = pt2[0] + (-3);
+	pt2[1] = pt2[1] + 4;
+	
+	pt3[0] = pt3[0] + (-3);
+	pt3[1] = pt3[1] + 4;
+	Triagulo(pt1, pt2, pt3, tri);
+}
+
 //funcao de Espelhamento em relação ao eixo x
+void Espelhamento(float pt1[2], float pt2[2], float pt3[2]){
+	pt1[1] = pt1[1] * (-1);
+	pt2[1] = pt2[1] * (-1);
+	pt3[1] = pt3[1] * (-1);
+	Triagulo(pt1, pt2, pt3, tri);
+}
 //funcao de Escala e Rotacao (ponto arbitrario (55, 65)) 
 
 //fim funcoes do tringulo
