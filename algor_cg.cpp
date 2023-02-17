@@ -418,5 +418,7 @@ void Espelhamento(float pt1[2], float pt2[2], float pt3[2]){
 	Triagulo(pt1, pt2, pt3, tri);
 }
 //funcao de Escala e Rotacao (ponto arbitrario (55, 65)) 
-
+void EscalaRotacao(float pt1[2], float pt2[2], float pt3[2]){
+	
+}
 //fim funcoes do tringulo
