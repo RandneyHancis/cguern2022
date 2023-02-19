@@ -8,7 +8,7 @@ using namespace std;
 int p1[2], p2[2], OP, XMAX, YMAX;
 float COS30 = 0.866, SEN30 = 0.5, SENN30 = -0.5;
 //pontos do triangulo
-float pt1[2] = {55, 90}, pt2[2] = {40, 50}, pt3[2] = {70, 50}, pat[2] = {55, 65};
+float pt1[3] = {55, 90, 1}, pt2[3] = {40, 50, 1}, pt3[3] = {70, 50, 1}, pArb[2] = {55, 65};
 bool tri == false;
 
 //prototipos das funcoes
@@ -25,6 +25,10 @@ void Escala(float pt1[2], float pt2[2], float pt3[2]);
 void Rotacao30(float pt1[2], float pt2[2], float pt3[2]);
 void Translacao(float pt1[2], float pt2[2], float pt3[2]);
 void Espelhamento(float pt1[2], float pt2[2], float pt3[2]);
+void EscalaRotacao(float pt1[3], float pt2[3], float pt3[3]);
+void EscalaArb(float pt1[3], float pt2[3], float pt3[3]);
+void RotacaoArb(float pt1[3], float pt2[3], float pt3[3]);
+//fim dos prototipos das funcoes
 
 int main() {
 	XMAX = 700;
@@ -203,7 +207,7 @@ void CasesMenu(int op){
 					Espelhamento(pt1, pt2, pt3);
 					break;
 				case 5:
-					//escala e rotacao
+					EscalaRotacao(pt1, pt2, pt3);
 					break:
 				case 6:
 					CasesMenu(op);
@@ -418,7 +422,42 @@ void Espelhamento(float pt1[2], float pt2[2], float pt3[2]){
 	Triagulo(pt1, pt2, pt3, tri);
 }
 //funcao de Escala e Rotacao (ponto arbitrario (55, 65)) 
-void EscalaRotacao(float pt1[2], float pt2[2], float pt3[2]){
-	
+void EscalaRotacao(float pt1[3], float pt2[3], float pt3[3]){
+	EscalaArb(pt1, pt2, pt3);
+	EscalaRotacao(pt1, pt2, p3);
+	Triagulo(pt1, pt2, pt3, tri);
+}
+
+//funcao escala com ponto fixo arbitrario
+void EscalaArb(float pt1[3], float pt2[3], float pt3[3]){
+	//ponto a
+	pt1[0] = pt1[0] * 2 + pt1[1] * 0 + pt1[2] * pArb[0] * (1 - 2);
+	pt1[1] = pt1[0] * 0 + pt1[1] * 2 + pt1[2] * pArb[1] * (1 - 2);
+	pt1[2] = pt1[0] * 0 + pt1[1] * 0 + pt1[2] * 1;
+	//ponto b
+	pt2[0] = pt1[0] * 2 + pt1[1] * 0 + pt1[2] * pArb[0] * (1 - 2);
+	pt2[1] = pt1[0] * 0 + pt1[1] * 2 + pt1[2] * pArb[1] * (1 - 2);
+	pt2[2] = pt1[0] * 0 + pt1[1] * 0 + pt1[2] * 1;
+	//ponto c
+	pt3[0] = pt1[0] * 2 + pt1[1] * 0 + pt1[2] * pArb[0] * (1 - 2);
+	pt3[1] = pt1[0] * 0 + pt1[1] * 2 + pt1[2] * pArb[1] * (1 - 2);
+	pt3[2] = pt1[0] * 0 + pt1[1] * 0 + pt1[2] * 1;
+}
+
+//funcao rotacao 30 com ponto fixo arbitrario
+void RotacaoArb(float pt1[3], float pt2[3], float pt3[3]){
+	//ponto a
+	pt1[0] = (pt1[0] * COS30) + (pt1[1] * SENN30) + (pt1[2] * pArb[0] * (1 - COS30) + pArb[1] * SEN30);
+	pt1[1] = (pt1[0] * COS30) + (pt1[1] * SENN30) + (pt1[2] * pArb[1] * (1 - COS30) - pArb[0] * SEN30);
+	pt1[2] = (pt1[0] * 0) + (pt1[1] * 0) + pt1[2] * 1;
+	//ponto b
+	pt2[0] = (pt1[0] * COS30) + (pt1[1] * SENN30) + (pt1[2] * pArb[0] * (1 - COS30) + pArb[1] * SEN30);
+	pt2[1] = (pt1[0] * COS30) + (pt1[1] * SENN30) + (pt1[2] * pArb[1] * (1 - COS30) - pArb[0] * SEN30);
+	pt2[2] = (pt1[0] * 0) + (pt1[1] * 0) + pt1[2] * 1;
+	//ponto c
+	pt3[0] = (pt1[0] * COS30) + (pt1[1] * SENN30) + (pt1[2] * pArb[0] * (1 - COS30) + pArb[1] * SEN30);
+	pt3[1] = (pt1[0] * COS30) + (pt1[1] * SENN30) + (pt1[2] * pArb[1] * (1 - COS30) - pArb[0] * SEN30);
+	pt3[2] = (pt1[0] * 0) + (pt1[1] * 0) + pt1[2] * 1;
+
 }
 //fim funcoes do tringulo
