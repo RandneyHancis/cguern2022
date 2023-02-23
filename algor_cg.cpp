@@ -7,6 +7,7 @@ using namespace std;
 
 int p1[2], p2[2], OP, XMAX, YMAX;
 float COS30 = 0.866, SEN30 = 0.5, SENN30 = -0.5;
+float PI = 3.14;
 //pontos do triangulo
 float pt1[3] = {55, 90, 1}, pt2[3] = {40, 50, 1}, pt3[3] = {70, 50, 1}, pArb[2] = {55, 65};
 bool tri == false;
@@ -28,6 +29,9 @@ void Espelhamento(float pt1[2], float pt2[2], float pt3[2]);
 void EscalaRotacao(float pt1[3], float pt2[3], float pt3[3]);
 void EscalaArb(float pt1[3], float pt2[3], float pt3[3]);
 void RotacaoArb(float pt1[3], float pt2[3], float pt3[3]);
+void circuloParametrico(int r, int cor);
+void simetriaOrdem8(int x, int y, int xc, int yc, int cor);
+void circParametricaOrdem8(int r, int cor);
 //fim dos prototipos das funcoes
 
 int main() {
@@ -127,7 +131,8 @@ int menu() {
 	cout << "Digite 1 para Reta Geral" << endl;
 	cout << "Digite 2 para Reta DDA" << endl;
 	cout << "Digite 3 para Reta Bresenham" << endl;
-	cout << "Digite 4 para sair" << endl; //acrescentar triagulo e modificar numeros
+	cout << "Digite 4 para abrir menu do triangulo" << endl;
+	cout << "Digite 5 para sair" << endl;
 	cout << "\n======================================================" << endl;
 	cout << "Opcao: ";
 	cin >> Op;
@@ -461,3 +466,55 @@ void RotacaoArb(float pt1[3], float pt2[3], float pt3[3]){
 
 }
 //fim funcoes do tringulo
+
+//inicio das funcoes da circunferencia
+//funcao da equacao parametrica
+void circuloParametrico(int r, int cor){
+	int x, y, xc, yc;
+	xc = XMAX / 2;
+	yc = YMAX / 2;
+	float t;
+	x = r;
+	y = 0;
+
+	for(t = 1; y < 360; t = t + 0.1){
+		putpixel(x + xc, y + yc, WHITE);
+		x = r * cos(PI * t / 180);
+		y = r * sin(PI * t / 180);
+	}
+}
+
+//funcao dos 8 pontos de 45 graus do circulo
+void simetriaOrdem8(int x, int y, int xc, int yc, int cor){
+	putpixel(x + xc, y + yc, cor);
+	putpixel(y + xc, x + yc, cor);
+	putpixel(-y + xc, x + yc, cor);
+	putpixel(-x + xc, y + yc, cor);
+	putpixel(-x + xc, -y + yc, cor);
+	putpixel(-y + xc, -x + yc, cor);
+	putpixel(y + xc, -x + yc, cor);
+	putpixel(x + xc, -y + yc, cor);
+}
+
+//funcao circunferencia parametrica usando a simetria de ordem 8
+void circParametricaOrdem8(int r, int cor){
+	int xc, yc, xr, yr;
+	double x, y, t;
+	xc = XMAX / 2;
+	yc = YMAX / 2;
+	t = 1 / (double)r;
+	x = double(r);
+	y = 0;
+	double c = cos(t);
+	double s = sin(t);
+	
+	while(y <= x){
+		xr = (int)round(x);
+		yr = (int)round(y);
+		simetriaOrdem8(xr, yr, xc, yc, WHITE);
+		x = x * c - y * s;
+		y = y * c + x * s;
+	}
+}
+
+//fim das funcoes da circunferencia
