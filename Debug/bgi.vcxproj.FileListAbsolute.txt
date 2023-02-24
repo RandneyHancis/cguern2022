@@ -1,1 +1,2 @@
 C:\Users\Randney\Documents\Visual Studio 2022\Projects\cpp\Graphics\Graphical Programming Workspace\Debug\bgi.exe
+C:\Users\Randney\Documents\Visual Studio 2022\Projects\cpp\Graphics\Graphical Programming Workspace\cguern2022\Debug\bgi.exe

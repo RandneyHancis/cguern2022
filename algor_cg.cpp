@@ -6,11 +6,11 @@
 using namespace std;
 
 int p1[2], p2[2], OP, XMAX, YMAX;
+float pdda1[2], pdda2[2];
 float COS30 = 0.866, SEN30 = 0.5, SENN30 = -0.5;
 float PI = 3.14;
 //pontos do triangulo
-float pt1[3] = {55, 90, 1}, pt2[3] = {40, 50, 1}, pt3[3] = {70, 50, 1}, pArb[2] = {55, 65};
-bool tri == false;
+float pt1[3] = { 55, 90, 1 }, pt2[3] = { 40, 50, 1 }, pt3[3] = { 70, 50, 1 }, pArb[2] = { 55, 65 };
 
 //prototipos das funcoes
 void Grade(int x, int y, int c);
@@ -19,9 +19,10 @@ int menuTri();
 void CasesMenu(int op);
 void Escrever(int x, int y);
 void RetaGeral(int p1[2], int p2[2]);
-void DDA(float p1[2], float p2[2], bool tri);
+void DDA(int p1[2], int p2[2]);
+void DDATri(float p1[2], float p2[2]);
 void Bresenham(int p1[2], int p2[2]);
-void Triagulo(float pt1[2], float pt2[2], float pt3[2], bool tri);
+void Triagulo(float pt1[2], float pt2[2], float pt3[2]);
 void Escala(float pt1[2], float pt2[2], float pt3[2]);
 void Rotacao30(float pt1[2], float pt2[2], float pt3[2]);
 void Translacao(float pt1[2], float pt2[2], float pt3[2]);
@@ -179,8 +180,7 @@ void CasesMenu(int op){
 			cin >> p1[0] >> p1[1];
 			cout << "Digite o ponto final da reta: ";
 			cin >> p2[0] >> p2[1];
-			tri = false;
-			DDA(p1, p2, tri);
+			DDA(p1, p2);
 			break;
 		case 3:
 			cout << "Digite o ponto inicial da reta: ";
@@ -191,13 +191,13 @@ void CasesMenu(int op){
 			break;
 		case 4:
 			OP = menuTri();
-			Triagulo(pt1, pt2, pt3, tri);
+			Triagulo(pt1, pt2, pt3);
 			while (OP != 7){
 				switch (OP){
 				case 0:
 					cleardevice();
 					Grade(XMAX, YMAX, 20);
-					Triagulo(pt1, pt2, pt3, tri);
+					Triagulo(pt1, pt2, pt3);
 					break;
 				case 1:
 					Escala(pt1, pt2, pt3);
@@ -213,7 +213,7 @@ void CasesMenu(int op){
 					break;
 				case 5:
 					EscalaRotacao(pt1, pt2, pt3);
-					break:
+					break;
 				case 6:
 					CasesMenu(op);
 					break;
@@ -291,7 +291,7 @@ void RetaGeral(int p1[2], int p2[2]) {
 }
 
 //Funcao da Digital Differential Analyser (DDA)
-void DDA(float p1[2], float p2[2], bool tri) {//observar tipo de variavel
+void DDA(int p1[2], int p2[2]) {//observar tipo de variavel
 	//calculo do dx e dy
 
 	int dx = p2[0] - p1[0];
@@ -309,20 +309,35 @@ void DDA(float p1[2], float p2[2], bool tri) {//observar tipo de variavel
 	//escreve o pixel em cada passo
 	float X = p1[0];
 	float Y = p1[1];
-	if(tri == false) { //se for linha
-		for (int i = 0; i <= decide; i++) {
-			putpixel(round(X), YMAX - round(Y), CYAN);
-			X += Xinc; //incremento de x em cada passo
-			Y += Yinc; //incremento de y em cada passo
-			delay(50);
-		}
-	}else{ //se for um tringulo
-		for (int i = 0; i <= decide; i++) {
-			putpixel(round(X + XMAX/2), round(YMAX/2 - Y), CYAN);
-			X += Xinc; //incremento de x em cada passo
-			Y += Yinc; //incremento de y em cada passo
-			delay(50);
-		}
+	for (int i = 0; i <= decide; i++) {
+		putpixel(round(X), YMAX - round(Y), CYAN);
+		X += Xinc; //incremento de x em cada passo
+		Y += Yinc; //incremento de y em cada passo
+		delay(50);
+	}
+}
+
+void DDATri(float p1[2], float p2[2]) {
+	//calculo do dx e dy
+
+	int dx = p2[0] - p1[0];
+	int dy = p2[1] - p1[1];
+	
+	//gerar pixels
+	int decide = abs(dx) > abs(dy) ? abs(dx) : abs(dy);
+
+	//calcula o incremento em x e em y para cada passo
+	float Xinc = dx / (float)decide;
+	float Yinc = dy / (float)decide;
+
+	//escreve o pixel em cada passo
+	float X = p1[0];
+	float Y = p1[1];
+	for (int i = 0; i <= decide; i++) {
+		putpixel(round(X + XMAX / 2), round(YMAX / 2 - Y), CYAN);
+		X += Xinc; //incremento de x em cada passo
+		Y += Yinc; //incremento de y em cada passo
+		//delay(50);
 	}
 }
 
@@ -368,10 +383,10 @@ void Bresenham(int p1[2], int p2[2]) {
 }
 
 //funcao para desenha triangulo
-void Triagulo(float pt1[2], float pt2[2], float pt3[2], bool tri){
-	DDA(pt1, pt2, tri);
-	DDA(pt1, pt3, tri);
-	DDA(pt2, pt3, tri);
+void Triagulo(float pt1[2], float pt2[2], float pt3[2]){
+	DDATri(pt1, pt2);
+	DDATri(pt1, pt3);
+	DDATri(pt2, pt3);
 }
 
 //funcoes do tringulo
@@ -385,7 +400,7 @@ void Escala(float pt1[2], float pt2[2], float pt3[2]){
 	
 	pt3[0] = pt3[0] * 2;
 	pt3[1] = pt3[1] * 2;
-	Triagulo(pt1, pt2, pt3, tri);
+	Triagulo(pt1, pt2, pt3);
 }
 
 //funcao de Rotacao de 30 graus
@@ -403,7 +418,7 @@ void Rotacao30(float pt1[2], float pt2[2], float pt3[2]){
 	pt3[1] = pt3[0] * SEN30 + pt3[1] * COS30;
 	pt3[0] = aux;
 
-	Triagulo(pt1, pt2, pt3, tri);
+	Triagulo(pt1, pt2, pt3);
 }
 
 //funcao de Translacao com fator (-3, 4)
@@ -416,7 +431,7 @@ void Translacao(float pt1[2], float pt2[2], float pt3[2]){
 	
 	pt3[0] = pt3[0] + (-3);
 	pt3[1] = pt3[1] + 4;
-	Triagulo(pt1, pt2, pt3, tri);
+	Triagulo(pt1, pt2, pt3);
 }
 
 //funcao de Espelhamento em relação ao eixo x
@@ -424,13 +439,13 @@ void Espelhamento(float pt1[2], float pt2[2], float pt3[2]){
 	pt1[1] = pt1[1] * (-1);
 	pt2[1] = pt2[1] * (-1);
 	pt3[1] = pt3[1] * (-1);
-	Triagulo(pt1, pt2, pt3, tri);
+	Triagulo(pt1, pt2, pt3);
 }
 //funcao de Escala e Rotacao (ponto arbitrario (55, 65)) 
 void EscalaRotacao(float pt1[3], float pt2[3], float pt3[3]){
 	EscalaArb(pt1, pt2, pt3);
-	EscalaRotacao(pt1, pt2, p3);
-	Triagulo(pt1, pt2, pt3, tri);
+	EscalaRotacao(pt1, pt2, pt3);
+	Triagulo(pt1, pt2, pt3);
 }
 
 //funcao escala com ponto fixo arbitrario
