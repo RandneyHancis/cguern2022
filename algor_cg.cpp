@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int p1[2], p2[2], OP, OPt, OPc, XMAX, YMAX, raio;
+int p1[2], p2[2], OP, OPt, OPc, XMAX, YMAX, raio, raioX, raioY;
 float pdda1[2], pdda2[2];
 float COS30 = 0.866, SEN30 = 0.5, SENN30 = -0.5;
 float PI = 3.14;
@@ -32,8 +32,10 @@ void EscalaArb(float pt1[3], float pt2[3], float pt3[3]);
 void RotacaoArb(float pt1[3], float pt2[3], float pt3[3]);
 //void circuloParametrico(int r, int cor);
 void simetriaOrdem8(int x, int y, int xc, int yc, int cor);
+void simetriaOrdem4(int x, int y, int xc, int yc, int cor);
 void circParametricaOrdem8(int r, int cor);
 void circPontoMedio(int r, int cor);
+void elipsePontoMedio(int raioX, int raioY, int cor);
 //fim dos prototipos das funcoes
 
 int main() {
@@ -45,78 +47,6 @@ int main() {
 	Grade(XMAX, YMAX, 20);
 	OP = menu();	
 	CasesMenu(OP);
-	/*while (OP != 5) {
-		switch (OP){
-		case 0:
-			cleardevice();
-			Grade(XMAX, YMAX, 20);
-			break;
-		case 1:
-			cout << "Digite o ponto inicial da reta: ";
-			cin >> p1[0] >> p1[1];
-			cout << "Digite o ponto final da reta: ";
-			cin >> p2[0] >> p2[1];
-			RetaGeral(p1, p2);
-			break;
-		case 2:
-			cout << "Digite o ponto inicial da reta: ";
-			cin >> p1[0] >> p1[1];
-			cout << "Digite o ponto final da reta: ";
-			cin >> p2[0] >> p2[1];
-			tri = false;
-			DDA(p1, p2, tri);
-			break;
-		case 3:
-			cout << "Digite o ponto inicial da reta: ";
-			cin >> p1[0] >> p1[1];
-			cout << "Digite o ponto final da reta: ";
-			cin >> p2[0] >> p2[1];
-			Bresenham(p1, p2);
-			break;
-		case 4:
-			OP = menuTri();
-			Triagulo(pt1, pt2, pt3, tri);
-			while (OP != 6){
-				switch (OP){
-				case 0:
-					cleardevice();
-					Grade(XMAX, YMAX, 20);
-					Triagulo(pt1, pt2, pt3, tri);
-					break;
-				case 1:
-					Escala(pt1, pt2, pt3);
-					break;
-				case 2:
-					Rotacao30(pt1, pt2, pt3);
-					break;
-				case 3:
-					Translacao(pt1, pt2, pt3);
-					break;
-				case 4:
-					Espelhamento(pt1, pt2, pt3);
-					break;
-				case 5:
-					//escala e rotacao
-					break:
-				case 6:
-
-				default:
-					cout << "Opcao nao existe, escolha opcao exeistente!" << endl;
-					system("pause");
-					break;
-				}
-			}
-		case 5:
-			closegraph();
-			exit;
-		default:
-			cout << "Opcao nao existe, escolha opcao existente!" << endl;
-			system("pause");
-			break;
-		}
-		system("cls");
-		OP = menu();
-	}*/
 
 	return 0;
 }
@@ -273,7 +203,16 @@ void CasesMenu(int op){
 						raio--;
 					}
 					break;
-				case 4: //elipse
+				case 4:
+					cout << "Qual o raio vertical da elipse: ";
+					cin >> raioX;
+					cout << "\n Qual o raio horizontal da elipse: ";
+					cin >> raioY;
+					while(raioX > 0){ //para preencher a elipse
+						elipsePontoMedio(raioX, raioY, GREEN);
+						raioX--;
+						raioY--;
+					}
 					break;
 				case 5:
 					closegraph();
@@ -680,7 +619,7 @@ void elipsePontoMedio(int raioX, int raioY, int cor){
 			d2 = d2 + dx - dy + (raioX * raioX);
 		}
 	}
-
 }
+//fim função elipse
 
 //fim das funcoes da circunferencia
