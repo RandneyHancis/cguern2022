@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int p1[2], p2[2], OP, XMAX, YMAX;
+int p1[2], p2[2], OP, OPt, OPc, XMAX, YMAX, raio;
 float pdda1[2], pdda2[2];
 float COS30 = 0.866, SEN30 = 0.5, SENN30 = -0.5;
 float PI = 3.14;
@@ -30,9 +30,10 @@ void Espelhamento(float pt1[2], float pt2[2], float pt3[2]);
 void EscalaRotacao(float pt1[3], float pt2[3], float pt3[3]);
 void EscalaArb(float pt1[3], float pt2[3], float pt3[3]);
 void RotacaoArb(float pt1[3], float pt2[3], float pt3[3]);
-void circuloParametrico(int r, int cor);
+//void circuloParametrico(int r, int cor);
 void simetriaOrdem8(int x, int y, int xc, int yc, int cor);
 void circParametricaOrdem8(int r, int cor);
+void circPontoMedio(int r, int cor);
 //fim dos prototipos das funcoes
 
 int main() {
@@ -133,7 +134,8 @@ int menu() {
 	cout << "Digite 2 para Reta DDA" << endl;
 	cout << "Digite 3 para Reta Bresenham" << endl;
 	cout << "Digite 4 para abrir menu do triangulo" << endl;
-	cout << "Digite 5 para sair" << endl;
+	cout << "Digite 5 para abrir o menu da circunferencia" << endl;
+	cout << "Digite 6 para sair" << endl;
 	cout << "\n======================================================" << endl;
 	cout << "Opcao: ";
 	cin >> Op;
@@ -142,7 +144,7 @@ int menu() {
 
 //funcao do submenu do triangulo
 int menuTri(){
-	int Op;
+	int Op2;
 	cout << "======================================================" << endl;
 	cout << "                 Escolha uma opcao                    " << endl;
 	cout << "======================================================" << endl;
@@ -153,16 +155,33 @@ int menuTri(){
 	cout << "Digite 4 para Espelhamento em relação ao eixo x" << endl;
 	cout << "Digite 5 para Escala e Rotacao (ponto arbitrario (55, 65))" << endl;
 	cout << "Digite 6 para voltar ao menu principal" << endl;
-	cout << "Digite 7 para sair" << endl;
 	cout << "\n======================================================" << endl;
 	cout << "Opcao: ";
-	cin >> Op;
-	return (Op);
+	cin >> Op2;
+	return (Op2);
+}
+
+//funcao do submenu da circunferencia
+int menuCirc() {
+	int Op3;
+	cout << "======================================================" << endl;
+	cout << "                 Escolha uma opcao                    " << endl;
+	cout << "======================================================" << endl;
+	cout << "Digite 0 para limpar a tela" << endl;
+	cout << "Digite 1 para circunferencia com algor. parametrico" << endl;
+	cout << "Digite 2 para circunferencia com algor. do ponto medio" << endl;
+	cout << "Digite 3 para circunferencia preenchida" << endl;
+	cout << "Digite 4 para desenhar uma elipse preenchida" << endl;
+	cout << "Digite 5 para voltar ao menu principal" << endl;
+	cout << "\n======================================================" << endl;
+	cout << "Opcao: ";
+	cin >> Op3;
+	return (Op3);
 }
 
 //funcao dos cases de menu
 void CasesMenu(int op){
-	while (OP != 5) {
+	while (OP != 6) {
 		switch (OP){
 		case 0:
 			cleardevice();
@@ -190,16 +209,17 @@ void CasesMenu(int op){
 			Bresenham(p1, p2);
 			break;
 		case 4:
-			OP = menuTri();
+			system("cls");			
 			Triagulo(pt1, pt2, pt3);
-			while (OP != 7){
-				switch (OP){
+			OPt = menuTri();
+			while (OPt != 6){
+				switch (OPt){
 				case 0:
 					cleardevice();
 					Grade(XMAX, YMAX, 20);
 					Triagulo(pt1, pt2, pt3);
 					break;
-				case 1:
+				case 1:					
 					Escala(pt1, pt2, pt3);
 					break;
 				case 2:
@@ -213,20 +233,61 @@ void CasesMenu(int op){
 					break;
 				case 5:
 					EscalaRotacao(pt1, pt2, pt3);
-					break;
-				case 6:
-					CasesMenu(op);
-					break;
-				case 7: 
+					break;				
+				case 6: 
 					closegraph();
 					exit;
 				default:
-					cout << "Opcao nao existe, escolha opcao exeistente!" << endl;
+					cout << "Opcao nao existe, escolha opcao existente!" << endl;
 					system("pause");
 					break;
 				}
+				system("cls");
+				OPt = menuTri();
 			}
+			break;
 		case 5:
+			system("cls");
+			OPc = menuCirc();						
+			while (OPc != 5) {
+				switch (OPc){
+				case 0:
+					cleardevice();
+					Grade(XMAX, YMAX, 20);					
+					break;
+				case 1:
+					cout << "Qual o raio da circunferencia: ";
+					cin >> raio;
+					circParametricaOrdem8(raio, YELLOW);
+					break;
+				case 2:
+					cout << "Qual o raio da circunferencia: ";
+					cin >> raio;
+					circPontoMedio(raio, GREEN);
+					break;
+				case 3:
+					cout << "Qual o raio da circunferencia: ";
+					cin >> raio;					
+					while (raio > 0) { //para preencher o circulo
+						circPontoMedio(raio, GREEN);
+						raio--;
+					}
+					break;
+				case 4: //elipse
+					break;
+				case 5:
+					closegraph();
+					exit;
+				default:
+					cout << "Opcao nao existe, escolha opcao existente!" << endl;
+					system("pause");
+					break;
+				}
+				system("cls");
+				OPc = menuCirc();
+			}
+			break;
+		case 6:
 			closegraph();
 			exit;
 		default:
@@ -484,7 +545,7 @@ void RotacaoArb(float pt1[3], float pt2[3], float pt3[3]){
 
 //inicio das funcoes da circunferencia
 //funcao da equacao parametrica
-void circuloParametrico(int r, int cor){
+/*void circuloParametrico(int r, int cor) {
 	int x, y, xc, yc;
 	xc = XMAX / 2;
 	yc = YMAX / 2;
@@ -497,9 +558,10 @@ void circuloParametrico(int r, int cor){
 		x = r * cos(PI * t / 180);
 		y = r * sin(PI * t / 180);
 	}
-}
+}*/
 
 //funcao dos 8 pontos de 45 graus do circulo
+
 void simetriaOrdem8(int x, int y, int xc, int yc, int cor){
 	putpixel(x + xc, y + yc, cor);
 	putpixel(y + xc, x + yc, cor);
@@ -515,8 +577,8 @@ void simetriaOrdem8(int x, int y, int xc, int yc, int cor){
 void circParametricaOrdem8(int r, int cor){
 	int xc, yc, xr, yr;
 	double x, y, t;
-	xc = XMAX / 2;
-	yc = YMAX / 2;
+	xc = XMAX / 2; //x centro da circunferência
+	yc = YMAX / 2; //y centro da circunferência
 	t = 1 / (double)r;
 	x = double(r);
 	y = 0;
@@ -527,8 +589,30 @@ void circParametricaOrdem8(int r, int cor){
 		xr = (int)round(x);
 		yr = (int)round(y);
 		simetriaOrdem8(xr, yr, xc, yc, WHITE);
-		x = x * c - y * s;
-		y = y * c + x * s;
+		x = x * c - y * s; //próximo x
+		y = y * c + x * s; //próximo y
+	}
+}
+
+//funcao ponto médio - curcunferência
+void circPontoMedio(int r, int cor) {
+	int xc, yc;
+	xc = XMAX / 2;
+	yc = YMAX / 2;
+	int x = 0;
+	int y = r;
+	double d = 5 / 4 - r;
+	simetriaOrdem8(x, y, xc, yc, cor);
+	while (y > x) {
+		if (d < 0) {
+			d = d + 2.0 * x + 3.0;
+		}
+		else {
+			d = d + 2.0 * (x - y) + 5;
+			y--;
+		}
+		x++;
+		simetriaOrdem8(x, y, xc, yc, cor);
 	}
 }
 
