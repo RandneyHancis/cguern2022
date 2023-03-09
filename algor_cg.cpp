@@ -616,4 +616,71 @@ void circPontoMedio(int r, int cor) {
 	}
 }
 
+//simetria de ordem 4 para a elipse
+void simetriaOrdem4(int x, int y, int xc, int yc, int cor){
+	putpixel(x + xc, y + yc, cor);
+	putpixel(-x + xc, y + yc, cor);
+	putpixel(x + xc, -y + yc, cor);
+	putpixel(-x + xc, -y + yc, cor);
+}
+
+//funcao da elipse
+void elipsePontoMedio(int raioX, int raioY, int cor){
+	int xc, yc;
+	xc = XMAX / 2;
+	yc = YMAX / 2;
+	float dx, dy, d1, d2, x, y;
+	x = 0;
+	y = raioY;
+
+	//parametro de decisao inicial regiao 1
+	d1 = (raioY * raioY) - (raioX * raioX * raioY) + (0.25 * raioX * raioX);
+	dx = 2 * raioY * raioY * x;
+	dy = 2 * raioX * raioX * Y;
+
+	//simetria de ordem 4 para a regiao 1
+	while(dx < dy){
+		simetriaOrdem4(x, xc, y, yc, YELLOW);
+		
+		//checa e atualiza valor de parametro de decisão
+		//baseado no algoritmo
+		if(d1 < 0){
+			x++;
+			dx = dx + (2 * raioY * raioY);
+			d1 = d1 + dx + (raioY * raioY);
+		}else{
+			x++;
+			y--;
+			dx = dx + (2 * raioY * raioY);
+			dy = dy - (2 * raioX * raioX);
+			d1 = d1 + dx - dy + (raioY * raioY);
+		}
+	}
+
+	//parametro de decisao inicial regiao 2
+	d2 = ((raioY * raioY) * ((x + 0.5) * (x + 0.5))) + 
+		 ((raioX * raioX) * ((y - 1) * (y - 1))) - 
+		 (raioX * raioX * raioY * raioY);
+	
+	//simetria de ordem 4 para a regiao 2
+	while(y >= 0){
+		simetriaOrdem4(x, xc, y, yc, YELLOW);
+		
+		//checa e atualiza valor de parametro de decisão
+		//baseado no algoritmo
+		if(d2 > 0){
+			y--;
+			dy = dy - (2 * raioX * raioX);
+			d2 = d2 + (raioX * raioX) - dy;
+		}else{
+			y--;
+			x++;
+			dx = dx + (2 * raioY * raioY);
+			dy = dy - (2 * raioX * raioX);
+			d2 = d2 + dx - dy + (raioX * raioX);
+		}
+	}
+
+}
+
 //fim das funcoes da circunferencia
