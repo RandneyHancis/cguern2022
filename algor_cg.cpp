@@ -32,7 +32,6 @@ void EscalaArb(float pt1[3], float pt2[3], float pt3[3]);
 void RotacaoArb(float pt1[3], float pt2[3], float pt3[3]);
 //void circuloParametrico(int r, int cor);
 void simetriaOrdem8(int x, int y, int xc, int yc, int cor);
-void simetriaOrdem4(int x, int y, int xc, int yc, int cor);
 void circParametricaOrdem8(int r, int cor);
 void circPontoMedio(int r, int cor);
 void elipsePontoMedio(int raioX, int raioY, int cor);
@@ -206,9 +205,10 @@ void CasesMenu(int op){
 				case 4:
 					cout << "Qual o raio vertical da elipse: ";
 					cin >> raioX;
-					cout << "\n Qual o raio horizontal da elipse: ";
+					cout << "Qual o raio horizontal da elipse: ";
 					cin >> raioY;
-					while(raioX > 0){ //para preencher a elipse
+					
+					while (raioX >= 0) { //para preencher a elipse
 						elipsePontoMedio(raioX, raioY, GREEN);
 						raioX--;
 						raioY--;
@@ -500,7 +500,6 @@ void RotacaoArb(float pt1[3], float pt2[3], float pt3[3]){
 }*/
 
 //funcao dos 8 pontos de 45 graus do circulo
-
 void simetriaOrdem8(int x, int y, int xc, int yc, int cor){
 	putpixel(x + xc, y + yc, cor);
 	putpixel(y + xc, x + yc, cor);
@@ -555,14 +554,6 @@ void circPontoMedio(int r, int cor) {
 	}
 }
 
-//simetria de ordem 4 para a elipse
-void simetriaOrdem4(int x, int y, int xc, int yc, int cor){
-	putpixel(x + xc, y + yc, cor);
-	putpixel(-x + xc, y + yc, cor);
-	putpixel(x + xc, -y + yc, cor);
-	putpixel(-x + xc, -y + yc, cor);
-}
-
 //funcao da elipse
 void elipsePontoMedio(int raioX, int raioY, int cor){
 	int xc, yc;
@@ -575,11 +566,12 @@ void elipsePontoMedio(int raioX, int raioY, int cor){
 	//parametro de decisao inicial regiao 1
 	d1 = (raioY * raioY) - (raioX * raioX * raioY) + (0.25 * raioX * raioX);
 	dx = 2 * raioY * raioY * x;
-	dy = 2 * raioX * raioX * Y;
+	dy = 2 * raioX * raioX * y;
 
-	//simetria de ordem 4 para a regiao 1
+	//simetria de ordem 8 para a regiao 1 com espelhamento
 	while(dx < dy){
-		simetriaOrdem4(x, xc, y, yc, YELLOW);
+		simetriaOrdem8(x, xc, y, yc, cor); //lado direito
+		simetriaOrdem8(x * -1, xc, y * -1, yc, cor); //lado esquerdo
 		
 		//checa e atualiza valor de parametro de decisão
 		//baseado no algoritmo
@@ -601,10 +593,11 @@ void elipsePontoMedio(int raioX, int raioY, int cor){
 		 ((raioX * raioX) * ((y - 1) * (y - 1))) - 
 		 (raioX * raioX * raioY * raioY);
 	
-	//simetria de ordem 4 para a regiao 2
-	while(y >= 0){
-		simetriaOrdem4(x, xc, y, yc, YELLOW);
-		
+	//simetria de ordem 8 para a regiao 2 com espelhamento
+	while (y >= 0) {
+		simetriaOrdem8(x, xc, y, yc, cor); //lado direito
+		simetriaOrdem8(x * -1, xc, y * -1, yc, cor); //lado esquerdo
+
 		//checa e atualiza valor de parametro de decisão
 		//baseado no algoritmo
 		if(d2 > 0){
@@ -623,3 +616,7 @@ void elipsePontoMedio(int raioX, int raioY, int cor){
 //fim função elipse
 
 //fim das funcoes da circunferencia
+
+//inicio das structs e funcoes do poligono concavo
+
+//fim das structs e funcoes do poligono concavo
