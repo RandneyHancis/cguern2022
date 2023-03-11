@@ -617,6 +617,109 @@ void elipsePontoMedio(int raioX, int raioY, int cor){
 
 //fim das funcoes da circunferencia
 
-//inicio das structs e funcoes do poligono concavo
+//inicio da struct e funcoes do poligono concavo
+https://study.narendradwivedi.org/2020/11/computer-graphics-cg-write-c-program-to_17.html
+https://www.google.com/search?q=concave+polygon+scanline+fill+algorithm+c%2B%2B+code+dda&client=firefox-b-lm&bih=625&biw=1366&hl=pt-BR&sxsrf=AJOqlzW6aR8QnYCTQ7C3BCVIyajlPEjhYg%3A1678503011221&ei=Y-wLZOqdDfGZ5OUP1qC2sA0&ved=0ahUKEwiq2_P97tL9AhXxDLkGHVaQDdYQ4dUDCA4&uact=5&oq=concave+polygon+scanline+fill+algorithm+c%2B%2B+code+dda&gs_lcp=Cgxnd3Mtd2l6LXNlcnAQAzIFCCEQoAEyBQghEKABOgoIABBHENYEELADOggIIRAWEB4QHUoECEEYAFC_BVi1DmDdFGgBcAF4AIABlAKIAfUGkgEFMC4xLjOYAQCgAQHIAQjAAQE&sclient=gws-wiz-serp
+struct Poli{
+	int arestas;
+	float xIni;
+	float yIni;
+	float xFim;
+	float yFim;
+	float yMin;
+	float yMax;
+	float xyMin;
+	int interseccao;
+	float invM;
+};
+
+class Poligono{
+	public:
+		int NL;
+		int Cor;
+		Poli Lado[10];
+		float LimSuper, LimInfe;
+		void InicializarPoli();
+		void DrawPoli;
+		void PreencherPoli();
+		int CalcInterseccao(int atual, int varredura);
+		float InvCoAngular(float x1, float y1, float x2, float y2);
+		void DDAPoli(float x1, float y1, float x2, float y2);
+}
+
+// Carregamento de instância de polígono (pontos extremos dos lados) - em lote
+Lado[1].xIni = 200;   Lado[2].xIni = 290;   Lado[3].xIni = 310;
+Lado[1].yIni = 50;    Lado[2].yIni = 120;   Lado[3].yIni = 220;
+Lado[1].xFim = 290;   Lado[2].xFim = 310;   Lado[3].xFim = 265;
+Lado[1].yFim = 120;   Lado[2].yFim = 220;   Lado[3].yFim = 120;
+//-------------------------
+Lado[4].xIni = 265;   Lado[5].xIni = 240;   Lado[6].xIni = 120;
+Lado[4].yIni = 120;   Lado[5].yIni = 220;   Lado[6].yIni = 210;
+Lado[4].xFim = 240;   Lado[5].xFim = 120;   Lado[6].xFim = 160;
+Lado[4].yFim = 220;   Lado[5].yFim = 210;   Lado[6].yFim = 120;
+//--------------------------
+Lado[7].xIni = 160;   Lado[8].xIni = 130;
+Lado[7].yIni = 120;   Lado[8].yIni = 100;
+Lado[7].xFim = 130;   Lado[8].xFim = 200;
+Lado[7].yFim = 100;   Lado[8].yFim = 50;
+
+// Carregamento dos dados posicionáis do polígono
+//y mínimo para cada Aresta
+Lado[1].yMin = 50;    Lado[2].yMin = 120;   Lado[3].yMin = 120;
+Lado[4].yMin = 120;   Lado[5].yMin = 210;   Lado[6].yMin = 120;
+Lado[7].yMin = 100;   Lado[8].yMin = 50;
+//y máximo para cada aresta
+Lado[1].yMax = 120;   Lado[2].yMax = 220;   Lado[3].yMax = 220;
+Lado[4].yMax = 220;   Lado[5].yMax = 220;   Lado[6].yMax = 210;
+Lado[7].yMax = 120;   Lado[8].yMax = 100;
+//x correspondente a cada y mínimo
+Lado[1].xyMin = 200;  Lado[2].xyMin = 290;  Lado[3].xyMin = 265;
+Lado[4].xyMin = 265;  Lado[5].xyMin = 120;  Lado[6].xyMin = 160;
+Lado[7].xyMin = 130;  Lado[8].xyMin = 200;
+
+void Poligono::DrawPoli(){
+	int i;
+	for (i = 1; i <= NL; i++)
+	DDAPoli(Lado[i].xIni , Lado[i].yIni, Lado[i].xFim, Lado[i].yFim);
+}
+
+void Poligono::PreencherPoli(){ 
+	int linha; //linha de varredura
+	int cont, j, i, l;
+	//este vetor contém o inverso do coeficiente angular de cada aresta
+	for (i = 1; i <= NL; i++)
+	Lado[i].invM = InvCoAngular(Lado[i].xIni, Lado[i].yIni,Lado[i].xFim,Lado[i].yFim);
+	for (linha = LimInfe; linha <= LimSuper; linha++){
+		cont = 1;
+		for (j = 1; j <= NL; j++){
+			if (((Lado[j].yMin < linha) && (Lado[j].yMax > linha)) || (Lado[j].yMax == linha)){
+			Lado[cont].arestas = j;
+			cont++;
+			}
+		}		
+	}
+	for (i = 1; i <= cont - 1; i++)
+		Lado[i].interseccao = CalcInterseccao(Lado[i].arestas, linha);
+	for (l = 1; l <= cont - 1; l++){
+		if ((l % 2) != 0)
+		DDAPoli(Lado[l].interseccao, linha, Lado[l + 1].interseccao + 1, linha);
+	}
+	delay(10);
+}
+
+float Poligono::InvCoAngular(float x1, float y1, float x2, float y2){
+	float parc1, parc2, resultado;
+	parc1 = y2 - y1;
+	parc2 = x2 - x1;
+	resultado = (1 / (parc1 / parc2));
+	return resultado;
+}
+
+int Poligono::CalcInterseccao(int atual, int varredura){
+	int resultado;
+	resultado = trunc((Lado[atual].invM * (varredura - Lado[atual].yMin)) +
+	Lado[atual].xyMin);
+	return resultado;
+}
 
 //fim das structs e funcoes do poligono concavo
