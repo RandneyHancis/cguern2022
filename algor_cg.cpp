@@ -470,12 +470,6 @@ void Espelhamento(float pt1[2], float pt2[2], float pt3[2]){
 	pt3[1] = pt3[1] * (-1);
 	Triagulo(pt1, pt2, pt3);
 }
-//funcao de Escala e Rotacao (ponto arbitrario (55, 65)) 
-void EscalaRotacao(float pt1[3], float pt2[3], float pt3[3]){
-	EscalaArb(pt1, pt2, pt3);
-	EscalaRotacao(pt1, pt2, pt3);
-	Triagulo(pt1, pt2, pt3);
-}
 
 //funcao escala com ponto fixo arbitrario
 void EscalaArb(float pt1[3], float pt2[3], float pt3[3]){
@@ -509,6 +503,14 @@ void RotacaoArb(float pt1[3], float pt2[3], float pt3[3]){
 	pt3[2] = (pt1[0] * 0) + (pt1[1] * 0) + pt1[2] * 1;
 
 }
+
+//funcao de Escala e Rotacao (ponto arbitrario (55, 65)) 
+void EscalaRotacao(float pt1[3], float pt2[3], float pt3[3]){
+	EscalaArb(pt1, pt2, pt3);
+	EscalaRotacao(pt1, pt2, pt3);
+	Triagulo(pt1, pt2, pt3);
+}
+
 //fim funcoes do tringulo
 
 //inicio das funcoes da circunferencia
