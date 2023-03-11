@@ -5,12 +5,33 @@
 
 using namespace std;
 
+class point
+{
+public:
+	int x, y;
+};
+class poly
+{
+private:
+	point p[20];
+	int inter[20], x, y;
+	int v, xmin, ymin, xmax, ymax;
+public:
+	int c;
+	void lados();
+	void calcs();
+	void display();
+	void ints(float);
+	void preenche(int);
+};
+
 int p1[2], p2[2], OP, OPt, OPc, XMAX, YMAX, raio, raioX, raioY;
 float pdda1[2], pdda2[2];
 float COS30 = 0.866, SEN30 = 0.5, SENN30 = -0.5;
 float PI = 3.14;
 //pontos do triangulo
 float pt1[3] = { 55, 90, 1 }, pt2[3] = { 40, 50, 1 }, pt3[3] = { 70, 50, 1 }, pArb[2] = { 55, 65 };
+poly x;
 
 //prototipos das funcoes
 void Grade(int x, int y, int c);
@@ -64,7 +85,8 @@ int menu() {
 	cout << "Digite 3 para Reta Bresenham" << endl;
 	cout << "Digite 4 para abrir menu do triangulo" << endl;
 	cout << "Digite 5 para abrir o menu da circunferencia" << endl;
-	cout << "Digite 6 para sair" << endl;
+	cout << "Digite 6 para desenhar um poligono concavo preenchido" << endl;
+	cout << "Digite 7 para sair" << endl;
 	cout << "\n======================================================" << endl;
 	cout << "Opcao: ";
 	cin >> Op;
@@ -110,7 +132,7 @@ int menuCirc() {
 
 //funcao dos cases de menu
 void CasesMenu(int op){
-	while (OP != 6) {
+	while (OP != 7) {
 		switch (OP){
 		case 0:
 			cleardevice();
@@ -226,7 +248,14 @@ void CasesMenu(int op){
 				OPc = menuCirc();
 			}
 			break;
-		case 6:
+		case 6:			
+			x.lados();
+			x.calcs();
+			cleardevice();
+			setcolor(GREEN);
+			x.display();
+			break;
+		case 7:
 			closegraph();
 			exit;
 		default:
@@ -617,109 +646,97 @@ void elipsePontoMedio(int raioX, int raioY, int cor){
 
 //fim das funcoes da circunferencia
 
-//inicio da struct e funcoes do poligono concavo
-https://study.narendradwivedi.org/2020/11/computer-graphics-cg-write-c-program-to_17.html
-https://www.google.com/search?q=concave+polygon+scanline+fill+algorithm+c%2B%2B+code+dda&client=firefox-b-lm&bih=625&biw=1366&hl=pt-BR&sxsrf=AJOqlzW6aR8QnYCTQ7C3BCVIyajlPEjhYg%3A1678503011221&ei=Y-wLZOqdDfGZ5OUP1qC2sA0&ved=0ahUKEwiq2_P97tL9AhXxDLkGHVaQDdYQ4dUDCA4&uact=5&oq=concave+polygon+scanline+fill+algorithm+c%2B%2B+code+dda&gs_lcp=Cgxnd3Mtd2l6LXNlcnAQAzIFCCEQoAEyBQghEKABOgoIABBHENYEELADOggIIRAWEB4QHUoECEEYAFC_BVi1DmDdFGgBcAF4AIABlAKIAfUGkgEFMC4xLjOYAQCgAQHIAQjAAQE&sclient=gws-wiz-serp
-struct Poli{
-	int arestas;
-	float xIni;
-	float yIni;
-	float xFim;
-	float yFim;
-	float yMin;
-	float yMax;
-	float xyMin;
-	int interseccao;
-	float invM;
-};
-
-class Poligono{
-	public:
-		int NL;
-		int Cor;
-		Poli Lado[10];
-		float LimSuper, LimInfe;
-		void InicializarPoli();
-		void DrawPoli;
-		void PreencherPoli();
-		int CalcInterseccao(int atual, int varredura);
-		float InvCoAngular(float x1, float y1, float x2, float y2);
-		void DDAPoli(float x1, float y1, float x2, float y2);
-}
-
-// Carregamento de instância de polígono (pontos extremos dos lados) - em lote
-Lado[1].xIni = 200;   Lado[2].xIni = 290;   Lado[3].xIni = 310;
-Lado[1].yIni = 50;    Lado[2].yIni = 120;   Lado[3].yIni = 220;
-Lado[1].xFim = 290;   Lado[2].xFim = 310;   Lado[3].xFim = 265;
-Lado[1].yFim = 120;   Lado[2].yFim = 220;   Lado[3].yFim = 120;
-//-------------------------
-Lado[4].xIni = 265;   Lado[5].xIni = 240;   Lado[6].xIni = 120;
-Lado[4].yIni = 120;   Lado[5].yIni = 220;   Lado[6].yIni = 210;
-Lado[4].xFim = 240;   Lado[5].xFim = 120;   Lado[6].xFim = 160;
-Lado[4].yFim = 220;   Lado[5].yFim = 210;   Lado[6].yFim = 120;
-//--------------------------
-Lado[7].xIni = 160;   Lado[8].xIni = 130;
-Lado[7].yIni = 120;   Lado[8].yIni = 100;
-Lado[7].xFim = 130;   Lado[8].xFim = 200;
-Lado[7].yFim = 100;   Lado[8].yFim = 50;
-
-// Carregamento dos dados posicionáis do polígono
-//y mínimo para cada Aresta
-Lado[1].yMin = 50;    Lado[2].yMin = 120;   Lado[3].yMin = 120;
-Lado[4].yMin = 120;   Lado[5].yMin = 210;   Lado[6].yMin = 120;
-Lado[7].yMin = 100;   Lado[8].yMin = 50;
-//y máximo para cada aresta
-Lado[1].yMax = 120;   Lado[2].yMax = 220;   Lado[3].yMax = 220;
-Lado[4].yMax = 220;   Lado[5].yMax = 220;   Lado[6].yMax = 210;
-Lado[7].yMax = 120;   Lado[8].yMax = 100;
-//x correspondente a cada y mínimo
-Lado[1].xyMin = 200;  Lado[2].xyMin = 290;  Lado[3].xyMin = 265;
-Lado[4].xyMin = 265;  Lado[5].xyMin = 120;  Lado[6].xyMin = 160;
-Lado[7].xyMin = 130;  Lado[8].xyMin = 200;
-
-void Poligono::DrawPoli(){
+//inicio das funcoes do poligono concavo
+void poly::lados(){ //verifica se o poligono e aceitavel e faz a escolha dos pontos
 	int i;
-	for (i = 1; i <= NL; i++)
-	DDAPoli(Lado[i].xIni , Lado[i].yIni, Lado[i].xFim, Lado[i].yFim);
+	cout << "\n Numero de vertices do poligono: ";
+	cin >> v;
+	if (v > 2) 
+	{
+		for (i = 0; i < v; i++)
+		{
+			cout << "\nCoordenada " << i + 1 << " : ";
+			cout << "\n\tx" << (i + 1) << "=";
+			cin >> p[i].x;
+			cout << "\n\ty" << (i + 1) << "=";
+			cin >> p[i].y;
+		}
+		p[i].x = p[0].x;
+		p[i].y = p[0].y;
+		xmin = xmax = p[0].x;
+		ymin = ymax = p[0].y;
+	}
+	else
+		cout << "\n Escolha numero valido de vertices";
 }
 
-void Poligono::PreencherPoli(){ 
-	int linha; //linha de varredura
-	int cont, j, i, l;
-	//este vetor contém o inverso do coeficiente angular de cada aresta
-	for (i = 1; i <= NL; i++)
-	Lado[i].invM = InvCoAngular(Lado[i].xIni, Lado[i].yIni,Lado[i].xFim,Lado[i].yFim);
-	for (linha = LimInfe; linha <= LimSuper; linha++){
-		cont = 1;
-		for (j = 1; j <= NL; j++){
-			if (((Lado[j].yMin < linha) && (Lado[j].yMax > linha)) || (Lado[j].yMax == linha)){
-			Lado[cont].arestas = j;
-			cont++;
+void poly::calcs()
+{
+	for (int i = 0; i < v; i++)
+	{
+		if (xmin > p[i].x)
+			xmin = p[i].x;
+		if (xmax < p[i].x)
+			xmax = p[i].x;
+		if (ymin > p[i].y)
+			ymin = p[i].y;
+		if (ymax < p[i].y)
+			ymax = p[i].y;
+	}
+}
+
+void poly::display(){	
+	float s;
+
+	s = ymin + 0.01;
+	delay(25);
+	cleardevice();
+	while (s <= ymax){
+		ints(s);
+		preenche(s);
+		s++;
+	}	
+}
+
+void poly::ints(float z){
+	int x1, x2, y1, y2, temp;
+	c = 0;
+	for (int i = 0; i < v; i++){
+		x1 = p[i].x;
+		y1 = p[i].y;
+		x2 = p[i + 1].x;
+		y2 = p[i + 1].y;
+		if (y2 < y1){
+			temp = x1;
+			x1 = x2;
+			x2 = temp;
+			temp = y1;
+			y1 = y2;
+			y2 = temp;
+		}
+		if (z <= y2 && z >= y1){
+			if ((y1 - y2) == 0)
+				x = x1;
+			else{
+				x = ((x2 - x1) * (z - y1)) / (y2 - y1);
+				x = x + x1;
 			}
-		}		
+			if (x <= xmax && x >= xmin)
+				inter[c++] = x;
+		}
 	}
-	for (i = 1; i <= cont - 1; i++)
-		Lado[i].interseccao = CalcInterseccao(Lado[i].arestas, linha);
-	for (l = 1; l <= cont - 1; l++){
-		if ((l % 2) != 0)
-		DDAPoli(Lado[l].interseccao, linha, Lado[l + 1].interseccao + 1, linha);
+}
+
+void poly::preenche(int z){
+	int j, i;
+	for (i = 0; i < v; i++){
+		line(p[i].x, p[i].y, p[i + 1].x, p[i + 1].y);
 	}
-	delay(10);
+	delay(25);
+	for (i = 0; i < c; i += 2){
+		delay(25);
+		line(inter[i], z, inter[i + 1], z);
+	}
 }
 
-float Poligono::InvCoAngular(float x1, float y1, float x2, float y2){
-	float parc1, parc2, resultado;
-	parc1 = y2 - y1;
-	parc2 = x2 - x1;
-	resultado = (1 / (parc1 / parc2));
-	return resultado;
-}
-
-int Poligono::CalcInterseccao(int atual, int varredura){
-	int resultado;
-	resultado = trunc((Lado[atual].invM * (varredura - Lado[atual].yMin)) +
-	Lado[atual].xyMin);
-	return resultado;
-}
-
-//fim das structs e funcoes do poligono concavo
+//fim das funcoes do poligono concavo
